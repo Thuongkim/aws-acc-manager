@@ -5,36 +5,36 @@
         <th>Id</th>
         <th>Account Name</th>
         <th>Email</th>
-        <th>Role Name</th>
+{{--        <th>Role Name</th>--}}
         <th>Status</th>
-            <th colspan="3">Action</th>
+{{--            <th colspan="3">Action</th>--}}
         </tr>
         </thead>
         <tbody>
-{{--        @foreach($users as $user)--}}
+        @foreach($accounts as $account)
             <tr>
-                <td>example</td>
-            <td>example</td>
-            <td>example</td>
-            <td>example</td>
-            <td>example</td>
-                <td width="120">
-{{--                    {!! Form::open(['route' => ['users.destroy', $user->id], 'method' => 'delete']) !!}--}}
+                <td>{{ $account['Id'] }}</td>
+            <td>{{ $account['Name'] }}</td>
+            <td>{{ $account['Email'] }}</td>
+{{--            <td>{{ $account['password'] }}</td>--}}
+            <td>{{ $account['Status'] }}</td>
+{{--                <td width="120">--}}
+{{--                    {!! Form::open(['route' => ['users.destroy', $account['Id']], 'method' => 'delete']) !!}--}}
 {{--                    <div class='btn-group'>--}}
-{{--                        <a href="{{ route('users.show', [$user->id]) }}"--}}
+{{--                        <a href="{{ route('users.show', [$account['Id']]) }}"--}}
 {{--                           class='btn btn-default btn-xs'>--}}
 {{--                            <i class="far fa-eye"></i>--}}
 {{--                        </a>--}}
-{{--                        <a href="{{ route('users.edit', [$user->id]) }}"--}}
+{{--                        <a href="{{ route('users.edit', [$account['Id']]) }}"--}}
 {{--                           class='btn btn-default btn-xs'>--}}
 {{--                            <i class="far fa-edit"></i>--}}
 {{--                        </a>--}}
 {{--                        {!! Form::button('<i class="far fa-trash-alt"></i>', ['type' => 'submit', 'class' => 'btn btn-danger btn-xs', 'onclick' => "return confirm('Are you sure?')"]) !!}--}}
 {{--                    </div>--}}
 {{--                    {!! Form::close() !!}--}}
-                </td>
+{{--                </td>--}}
             </tr>
-{{--        @endforeach--}}
+        @endforeach
         </tbody>
     </table>
 </div>
