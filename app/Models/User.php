@@ -66,7 +66,8 @@ class User extends Authenticatable
         'name' => 'required|string|max:255',
         'email' => 'required|string|max:255',
         'email_verified_at' => 'nullable',
-        'password' => 'required|string|max:255',
+        'password' => 'required|confirmed|string|max:255',
+        'password_confirmation' => 'required|string|max:255',
         'remember_token' => 'nullable|string|max:100',
         'created_at' => 'nullable',
         'updated_at' => 'nullable'

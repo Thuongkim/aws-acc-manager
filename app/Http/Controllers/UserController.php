@@ -8,6 +8,7 @@ use App\Repositories\UserRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
 use Flash;
+use Illuminate\Support\Facades\Hash;
 use Response;
 
 class UserController extends AppBaseController
@@ -113,6 +114,8 @@ class UserController extends AppBaseController
      */
     public function update($id, UpdateUserRequest $request)
     {
+        $data = $request->all();
+        $data['password'] = Hash::make($data['password']);
         $user = $this->userRepository->find($id);
 
         if (empty($user)) {
@@ -121,11 +124,11 @@ class UserController extends AppBaseController
             return redirect(route('users.index'));
         }
 
-        $user = $this->userRepository->update($request->all(), $id);
+        $user = $this->userRepository->update($data, $id);
 
         Flash::success('User updated successfully.');
 
-        return redirect(route('users.index'));
+        return redirect(route('users.show', $id));
     }
 
     /**

@@ -24,7 +24,9 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/accounts/remove_aws_resource/{id}', [App\Http\Controllers\AccountController::class, 'removeAWSResource'])->name('accounts.removeAWSResource');
     Route::get('/accounts/remove_aws_resource_stream/{id}', [App\Http\Controllers\AccountController::class, 'removeAWSResourceStream'])->name('accounts.removeAWSResourceStream');
 
-    Route::resource('users', App\Http\Controllers\UserController::class);
+    Route::get('/users/{id}', [App\Http\Controllers\UserController::class, 'show'])->name('users.show');
+    Route::patch('/users/{id}', [App\Http\Controllers\UserController::class, 'update'])->name('users.update');
+    Route::get('/users/{id}/edit', [App\Http\Controllers\UserController::class, 'edit'])->name('users.edit');
     Route::resource('accounts', App\Http\Controllers\AccountController::class);
     Route::get('/account/sync', [App\Http\Controllers\AccountController::class, 'sync'])->name('sync');
 });

@@ -8,9 +8,9 @@
                     <h1>User Details</h1>
                 </div>
                 <div class="col-sm-6">
-                    <a class="btn btn-default float-right"
-                       href="{{ route('users.index') }}">
-                        Back
+                    <a class="btn btn-primary float-right"
+                       href="{{ route('users.edit', Auth::user()->id) }}">
+                        Edit
                     </a>
                 </div>
             </div>

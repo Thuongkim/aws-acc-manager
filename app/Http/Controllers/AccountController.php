@@ -83,7 +83,7 @@ class AccountController extends AppBaseController
         $organizationsClient = $this->awsService->getAwsInstance();
         $organizationsClient->createAccount($data);
 
-        Flash::success('Account saved successfully.');
+        Flash::success('Request in progress.');
 
         return redirect(route('accounts.index'));
     }

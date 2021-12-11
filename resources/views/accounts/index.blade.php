@@ -12,7 +12,7 @@
                        href="{{ route('sync') }}">
                         Sync Accounts
                     </a>
-                    <a class="btn btn-primary float-right"
+                    <a class="btn btn-primary float-right mr-3"
                        href="{{ route('accounts.create') }}">
                         Add New
                     </a>
@@ -33,7 +33,7 @@
 
                 <div class="card-footer clearfix">
                     <div class="float-right">
-                        
+
                     </div>
                 </div>
             </div>

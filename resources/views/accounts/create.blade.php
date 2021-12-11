@@ -22,7 +22,7 @@
             <div class="card-body">
 
                 <div class="row">
-                    @include('accounts.fields')
+                    @include('accounts.create_fields')
                 </div>
 
             </div>
