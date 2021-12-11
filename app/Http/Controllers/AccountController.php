@@ -11,15 +11,25 @@ use Flash;
 use Response;
 use Aws\Organizations\OrganizationsClient;
 use Aws\Credentials\CredentialProvider;
+use App\Services\AwsService;
 
 class AccountController extends AppBaseController
 {
     /** @var  UserRepository */
     private $userRepository;
 
-    public function __construct(UserRepository $userRepo)
+    /**
+     * @var AwsService
+     */
+    private $awsService;
+
+    public function __construct(
+        UserRepository $userRepo,
+        AwsService $awsService
+    )
     {
         $this->userRepository = $userRepo;
+        $this->awsService = $awsService;
     }
 
     /**
@@ -31,12 +41,7 @@ class AccountController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $provider = CredentialProvider::defaultProvider();
-        $organizationsClient = new OrganizationsClient([
-            'credentials' => $provider,
-            'version' => '2016-11-28',
-            'region' => 'us-east-1',
-        ]);
+        $organizationsClient = $this->awsService->getAwsInstance();
         $accounts = $organizationsClient->listAccounts()->toArray();
 
         return view('accounts.index')
@@ -67,13 +72,8 @@ class AccountController extends AppBaseController
             'AccountName' => $request->name,
         ];
 
-        $provider = CredentialProvider::defaultProvider();
-        $organizationsClient = new OrganizationsClient([
-            'credentials' => $provider,
-            'version' => '2016-11-28',
-            'region' => 'us-east-1',
-        ]);
-       $organizationsClient->createAccount($data);
+        $organizationsClient = $this->awsService->getAwsInstance();
+        $organizationsClient->createAccount($data);
 
         Flash::success('Account saved successfully.');
 
