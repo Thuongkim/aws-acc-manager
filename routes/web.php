@@ -28,5 +28,6 @@ Route::group(['middleware' => 'auth'], function() {
     Route::patch('/users/{id}', [App\Http\Controllers\UserController::class, 'update'])->name('users.update');
     Route::get('/users/{id}/edit', [App\Http\Controllers\UserController::class, 'edit'])->name('users.edit');
     Route::resource('accounts', App\Http\Controllers\AccountController::class);
+    Route::resource('system_settings', App\Http\Controllers\SystemSettingController::class);
     Route::get('/account/sync', [App\Http\Controllers\AccountController::class, 'sync'])->name('sync');
 });
