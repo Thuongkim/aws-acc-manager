@@ -7,11 +7,14 @@ use App\Http\Requests\UpdateAccountRequest;
 use App\Repositories\AccountRepository;
 use App\Repositories\UserRepository;
 use App\Http\Controllers\AppBaseController;
+use App\Jobs\RemoveAWSResource;
 use Illuminate\Http\Request;
 use Flash;
 use Response;
 use Aws\Organizations\OrganizationsClient;
 use Aws\Credentials\CredentialProvider;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Illuminate\Support\Facades\Log;
 use App\Services\AwsService;
 use Exception;
 
@@ -207,5 +210,42 @@ class AccountController extends AppBaseController
         Flash::success('Sync successfully.');
 
         return redirect(route('accounts.index'));
+    }
+
+    public function removeAWSResource($id) {
+        $account = $this->accountRepository->find($id);
+        if (empty($account)) {
+            Flash::error('Account not found');
+            return redirect(route('accounts.index'));
+        }
+
+        $logFile = $account->aws_id .'.txt';
+        $stream = fopen($logFile, 'w');
+        fwrite($stream, 'Starting ...' . PHP_EOL);
+        fclose($stream);
+        RemoveAWSResource::dispatch($id, $this->accountRepository);
+        return view('accounts.remove_aws_resource', ['id' => $id, 'account' => $account, 'logFile' => $logFile]);
+    }
+
+    public function removeAWSResourceStream($id) {
+        $account = $this->accountRepository->find($id);
+        if (empty($account)) {
+            return;
+        }
+
+        $response = new StreamedResponse();
+        $response->setCallback(function () use ($account) {
+            $content = file_get_contents($account->aws_id .'.txt');
+            $data = explode(PHP_EOL, $content);
+            echo 'data: ' . json_encode($data) . "\n\n";
+            flush();
+            ob_flush();
+            usleep(200000);
+        });
+
+        $response->headers->set('Content-Type', 'text/event-stream');
+        $response->headers->set('X-Accel-Buffering', 'no');
+        $response->headers->set('Cach-Control', 'no-cache');
+        $response->send();
     }
 }
