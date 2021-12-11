@@ -10,11 +10,13 @@
                 <div class="col-sm-6">
                     <a class="btn btn-primary float-right"
                        href="{{ route('sync') }}">
-                        Sync Accounts
+                       <i class="fas fa-sync"></i>
+                       Sync from AWS
                     </a>
                     <a class="btn btn-primary float-right mr-3"
                        href="{{ route('accounts.create') }}">
-                        Add New
+                       <i class="fas fa-user-plus"></i>
+                       Add
                     </a>
                 </div>
             </div>
