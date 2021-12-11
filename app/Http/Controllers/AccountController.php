@@ -9,6 +9,8 @@ use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
 use Flash;
 use Response;
+use Aws\Organizations\OrganizationsClient;
+use Aws\Credentials\CredentialProvider;
 
 class AccountController extends AppBaseController
 {
@@ -29,10 +31,16 @@ class AccountController extends AppBaseController
      */
     public function index(Request $request)
     {
-//        $users = $this->userRepository->all();
+        $provider = CredentialProvider::defaultProvider();
+        $organizationsClient = new OrganizationsClient([
+            'credentials' => $provider,
+            'version' => '2016-11-28',
+            'region' => 'us-east-1',
+        ]);
+        $accounts = $organizationsClient->listAccounts()->toArray();
 
-        return view('accounts.index');
-//            ->with('users', $users);
+        return view('accounts.index')
+            ->with('accounts', $accounts['Accounts']);
     }
 
     /**
@@ -42,7 +50,7 @@ class AccountController extends AppBaseController
      */
     public function create()
     {
-        return view('users.create');
+        return view('accounts.create');
     }
 
     /**
@@ -52,15 +60,24 @@ class AccountController extends AppBaseController
      *
      * @return Response
      */
-    public function store(CreateUserRequest $request)
+    public function store(Request $request)
     {
-        $input = $request->all();
+        $data = [
+            'Email' => $request->email,
+            'AccountName' => $request->name,
+        ];
 
-        $user = $this->userRepository->create($input);
+        $provider = CredentialProvider::defaultProvider();
+        $organizationsClient = new OrganizationsClient([
+            'credentials' => $provider,
+            'version' => '2016-11-28',
+            'region' => 'us-east-1',
+        ]);
+       $organizationsClient->createAccount($data);
 
-        Flash::success('User saved successfully.');
+        Flash::success('Account saved successfully.');
 
-        return redirect(route('users.index'));
+        return redirect(route('accounts.index'));
     }
 
     /**
