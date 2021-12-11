@@ -6,11 +6,14 @@ use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Repositories\UserRepository;
 use App\Http\Controllers\AppBaseController;
+use App\Jobs\RemoveAWSResource;
 use Illuminate\Http\Request;
 use Flash;
 use Response;
 use Aws\Organizations\OrganizationsClient;
 use Aws\Credentials\CredentialProvider;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Illuminate\Support\Facades\Log;
 
 class AccountController extends AppBaseController
 {
@@ -169,5 +172,32 @@ class AccountController extends AppBaseController
         Flash::success('User deleted successfully.');
 
         return redirect(route('users.index'));
+    }
+
+    public function removeAWSResource($id) {
+        $logFile = $id .'.txt';
+        $stream = fopen($logFile, 'w');
+        fwrite($stream, 'Starting ...'.PHP_EOL);
+        fclose($stream);
+        RemoveAWSResource::dispatch($id);
+        return view('accounts.remove_aws_resource', ['id' => $id, 'logFile' => $logFile]);
+    }
+
+    public function removeAWSResourceStream($id) {
+
+        $response = new StreamedResponse();
+        $response->setCallback(function () use ($id) {
+            $content = file_get_contents($id .'.txt');
+            $data = explode(PHP_EOL, $content);
+            echo 'data: ' . json_encode($data) . "\n\n";
+            flush();
+            ob_flush();
+            usleep(200000);
+        });
+
+        $response->headers->set('Content-Type', 'text/event-stream');
+        $response->headers->set('X-Accel-Buffering', 'no');
+        $response->headers->set('Cach-Control', 'no-cache');
+        $response->send();
     }
 }
