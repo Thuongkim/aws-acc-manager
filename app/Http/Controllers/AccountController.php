@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CreateUserRequest;
-use App\Http\Requests\UpdateUserRequest;
+use App\Http\Requests\CreateAccountRequest;
+use App\Http\Requests\UpdateAccountRequest;
+use App\Repositories\AccountRepository;
 use App\Repositories\UserRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
@@ -12,11 +13,14 @@ use Response;
 use Aws\Organizations\OrganizationsClient;
 use Aws\Credentials\CredentialProvider;
 use App\Services\AwsService;
+use Exception;
+
+use function PHPSTORM_META\map;
 
 class AccountController extends AppBaseController
 {
-    /** @var  UserRepository */
-    private $userRepository;
+    /** @var  AccountRepository */
+    private $accountRepository;
 
     /**
      * @var AwsService
@@ -24,16 +28,16 @@ class AccountController extends AppBaseController
     private $awsService;
 
     public function __construct(
-        UserRepository $userRepo,
+        AccountRepository $accountRepo,
         AwsService $awsService
     )
     {
-        $this->userRepository = $userRepo;
+        $this->accountRepository = $accountRepo;
         $this->awsService = $awsService;
     }
 
     /**
-     * Display a listing of the User.
+     * Display a listing of the Account.
      *
      * @param Request $request
      *
@@ -41,15 +45,16 @@ class AccountController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $organizationsClient = $this->awsService->getAwsInstance();
-        $accounts = $organizationsClient->listAccounts()->toArray();
+        // $organizationsClient = $this->awsService->getAwsInstance();
+        // $accounts = $organizationsClient->listAccounts()->toArray();
+        $accounts = $this->accountRepository->all();
 
         return view('accounts.index')
-            ->with('accounts', $accounts['Accounts']);
+            ->with('accounts', $accounts);
     }
 
     /**
-     * Show the form for creating a new User.
+     * Show the form for creating a new Account.
      *
      * @return Response
      */
@@ -59,13 +64,13 @@ class AccountController extends AppBaseController
     }
 
     /**
-     * Store a newly created User in storage.
+     * Store a newly created Account in storage.
      *
-     * @param CreateUserRequest $request
+     * @param CreateAccountRequest $request
      *
      * @return Response
      */
-    public function store(Request $request)
+    public function store(CreateAccountRequest $request)
     {
         $data = [
             'Email' => $request->email,
@@ -81,7 +86,7 @@ class AccountController extends AppBaseController
     }
 
     /**
-     * Display the specified User.
+     * Display the specified Account.
      *
      * @param int $id
      *
@@ -89,19 +94,19 @@ class AccountController extends AppBaseController
      */
     public function show($id)
     {
-        $user = $this->userRepository->find($id);
+        $account = $this->accountRepository->find($id);
 
-        if (empty($user)) {
-            Flash::error('User not found');
+        if (empty($account)) {
+            Flash::error('Account not found');
 
-            return redirect(route('users.index'));
+            return redirect(route('accounts.index'));
         }
 
-        return view('users.show')->with('user', $user);
+        return view('accounts.show')->with('account', $account);
     }
 
     /**
-     * Show the form for editing the specified User.
+     * Show the form for editing the specified Account.
      *
      * @param int $id
      *
@@ -109,44 +114,44 @@ class AccountController extends AppBaseController
      */
     public function edit($id)
     {
-        $user = $this->userRepository->find($id);
+        $account = $this->accountRepository->find($id);
 
-        if (empty($user)) {
-            Flash::error('User not found');
+        if (empty($account)) {
+            Flash::error('Account not found');
 
-            return redirect(route('users.index'));
+            return redirect(route('accounts.index'));
         }
 
-        return view('users.edit')->with('user', $user);
+        return view('accounts.edit')->with('account', $account);
     }
 
     /**
-     * Update the specified User in storage.
+     * Update the specified Account in storage.
      *
      * @param int $id
-     * @param UpdateUserRequest $request
+     * @param UpdateAccountRequest $request
      *
      * @return Response
      */
-    public function update($id, UpdateUserRequest $request)
+    public function update($id, UpdateAccountRequest $request)
     {
-        $user = $this->userRepository->find($id);
+        $account = $this->accountRepository->find($id);
 
-        if (empty($user)) {
-            Flash::error('User not found');
+        if (empty($account)) {
+            Flash::error('Account not found');
 
-            return redirect(route('users.index'));
+            return redirect(route('accounts.index'));
         }
 
-        $user = $this->userRepository->update($request->all(), $id);
+        $account = $this->accountRepository->update($request->all(), $id);
 
-        Flash::success('User updated successfully.');
+        Flash::success('Account updated successfully.');
 
-        return redirect(route('users.index'));
+        return redirect(route('accounts.index'));
     }
 
     /**
-     * Remove the specified User from storage.
+     * Remove the specified Account from storage.
      *
      * @param int $id
      *
@@ -156,18 +161,51 @@ class AccountController extends AppBaseController
      */
     public function destroy($id)
     {
-        $user = $this->userRepository->find($id);
+        $account = $this->accountRepository->find($id);
 
-        if (empty($user)) {
-            Flash::error('User not found');
+        if (empty($account)) {
+            Flash::error('Account not found');
 
-            return redirect(route('users.index'));
+            return redirect(route('accounts.index'));
         }
 
-        $this->userRepository->delete($id);
+        $this->accountRepository->delete($id);
 
-        Flash::success('User deleted successfully.');
+        Flash::success('Account deleted successfully.');
 
-        return redirect(route('users.index'));
+        return redirect(route('accounts.index'));
+    }
+
+    public function sync() 
+    {
+        try {
+
+        $organizationsClient = $this->awsService->getAwsInstance();
+        $res = $organizationsClient->listAccounts()->toArray();
+
+        $resAccounts = $res['Accounts'];
+        $accounts = [];
+        foreach ($resAccounts as $account) {
+            $acc = [
+                'aws_id' => $account['Id'],
+                'arn' => $account['Arn'],
+                'email' => $account['Email'],
+                'name' => $account['Name'],
+                'status' => $account['Status'],
+                'joined_method' => $account['JoinedMethod'],
+                'joined_at' => $account['JoinedTimestamp']->format('Y-m-d H:i:s')
+            ];
+            array_push($accounts, $acc);
+        }
+        
+        $createdAccounts = $this->accountRepository->insertArr($accounts);
+        }
+        catch(Exception $e){
+            Flash::error('Error');
+        }
+
+        Flash::success('Sync successfully.');
+
+        return redirect(route('accounts.index'));
     }
 }

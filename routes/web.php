@@ -23,4 +23,5 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::resource('users', App\Http\Controllers\UserController::class);
     Route::resource('accounts', App\Http\Controllers\AccountController::class);
+    Route::get('/account/sync', [App\Http\Controllers\AccountController::class, 'sync'])->name('sync');
 });
