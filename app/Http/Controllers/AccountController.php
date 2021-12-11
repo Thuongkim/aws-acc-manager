@@ -213,19 +213,29 @@ class AccountController extends AppBaseController
     }
 
     public function removeAWSResource($id) {
-        $logFile = $id .'.txt';
+        $account = $this->accountRepository->find($id);
+        if (empty($account)) {
+            Flash::error('Account not found');
+            return redirect(route('accounts.index'));
+        }
+
+        $logFile = $account->aws_id .'.txt';
         $stream = fopen($logFile, 'w');
-        fwrite($stream, 'Starting ...'.PHP_EOL);
+        fwrite($stream, 'Starting ...' . PHP_EOL);
         fclose($stream);
-        RemoveAWSResource::dispatch($id);
-        return view('accounts.remove_aws_resource', ['id' => $id, 'logFile' => $logFile]);
+        RemoveAWSResource::dispatch($id, $this->accountRepository);
+        return view('accounts.remove_aws_resource', ['id' => $id, 'account' => $account, 'logFile' => $logFile]);
     }
 
     public function removeAWSResourceStream($id) {
+        $account = $this->accountRepository->find($id);
+        if (empty($account)) {
+            return;
+        }
 
         $response = new StreamedResponse();
-        $response->setCallback(function () use ($id) {
-            $content = file_get_contents($id .'.txt');
+        $response->setCallback(function () use ($account) {
+            $content = file_get_contents($account->aws_id .'.txt');
             $data = explode(PHP_EOL, $content);
             echo 'data: ' . json_encode($data) . "\n\n";
             flush();

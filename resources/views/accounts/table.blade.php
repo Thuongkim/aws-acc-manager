@@ -2,15 +2,12 @@
     <table class="table" id="accounts-table">
         <thead>
         <tr>
-            <th>Aws Id</th>
-        <th>Arn</th>
+            <th>AWS ID</th>
         <th>Email</th>
         <th>Name</th>
         <th>Status</th>
         <th>Joined Method</th>
         <th>Joined At</th>
-        <th>Aws Access Key Id</th>
-        <th>Aws Secret Access Key</th>
             <th colspan="3">Action</th>
         </tr>
         </thead>
@@ -18,14 +15,11 @@
         @foreach($accounts as $account)
             <tr>
                 <td>{{ $account->aws_id }}</td>
-            <td>{{ $account->arn }}</td>
             <td>{{ $account->email }}</td>
             <td>{{ $account->name }}</td>
             <td>{{ $account->status }}</td>
             <td>{{ $account->joined_method }}</td>
             <td>{{ $account->joined_at }}</td>
-            <td>{{ $account->aws_access_key_id }}</td>
-            <td>{{ $account->aws_secret_access_key }}</td>
                 <td width="120">
                     {!! Form::open(['route' => ['accounts.destroy', $account->id], 'method' => 'delete']) !!}
                     <div class='btn-group'>
@@ -37,7 +31,10 @@
                            class='btn btn-default btn-xs'>
                             <i class="far fa-edit"></i>
                         </a>
-                        {!! Form::button('<i class="far fa-trash-alt"></i>', ['type' => 'submit', 'class' => 'btn btn-danger btn-xs', 'onclick' => "return confirm('Are you sure?')"]) !!}
+                        <a href="{{ route('accounts.removeAWSResource', [$account->id]) }}"
+                            class='btn btn-danger btn-xs' onclick="return confirm('Are you sure?')">
+                             <i class="far fa-trash-alt"></i>
+                         </a>
                     </div>
                     {!! Form::close() !!}
                 </td>
