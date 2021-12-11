@@ -219,6 +219,15 @@ class AccountController extends AppBaseController
             return redirect(route('accounts.index'));
         }
 
+        try {
+            $organizationsClient = $this->awsService->getAwsInstance();
+            $res = $organizationsClient->removeAccountFromOrganization([
+                'AccountId' => $account->aws_id
+            ]);
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+        }
+
         $logFile = $account->aws_id .'.txt';
         $stream = fopen($logFile, 'w');
         fwrite($stream, 'Starting ...' . PHP_EOL);
