@@ -41,6 +41,6 @@ class RemoveAWSResource implements ShouldQueue
         $accessKey = $account->aws_access_key_id;
         $secretKey = $account->aws_secret_access_key;
         $logFile = 'public/' . $awsID . ".txt";
-        shell_exec("AWS_ACCESS_KEY_ID={$accessKey}  AWS_SECRET_ACCESS_KEY={$secretKey} ./cloud-nuke_darwin_amd64 aws --force 2>&1 | tee " . $logFile);
+        shell_exec("AWS_ACCESS_KEY_ID={$accessKey}  AWS_SECRET_ACCESS_KEY={$secretKey} ./" . env('CLOUD_NUKE_FILE') . " aws --force 2>&1 | tee " . $logFile);
     }
 }
