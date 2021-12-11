@@ -70,7 +70,7 @@ class AccountController extends AppBaseController
      *
      * @return Response
      */
-    public function store(CreateAccountRequest $request)
+    public function store(Request $request)
     {
         $data = [
             'Email' => $request->email,
@@ -176,7 +176,7 @@ class AccountController extends AppBaseController
         return redirect(route('accounts.index'));
     }
 
-    public function sync() 
+    public function sync()
     {
         try {
 
@@ -197,8 +197,8 @@ class AccountController extends AppBaseController
             ];
             array_push($accounts, $acc);
         }
-        
-        $createdAccounts = $this->accountRepository->insertArr($accounts);
+
+        $this->accountRepository->upsertAccounts($accounts);
         }
         catch(Exception $e){
             Flash::error('Error');

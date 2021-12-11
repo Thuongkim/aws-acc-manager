@@ -46,8 +46,8 @@ class AccountRepository extends BaseRepository
         return Account::class;
     }
 
-    public function insertArr($arr)
+    public function upsertAccounts($data)
     {
-        return $this->model->insert($arr);
+        return $this->model->upsert($data, 'aws_id');
     }
 }
