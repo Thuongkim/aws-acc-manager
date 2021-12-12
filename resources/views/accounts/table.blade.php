@@ -7,6 +7,7 @@
         <th>Name</th>
         <th>Status</th>
         <th>Joined Method</th>
+        <th>Type</th>
         <th>Joined At</th>
             <th colspan="3">Action</th>
         </tr>
@@ -19,6 +20,7 @@
             <td>{{ $account->name }}</td>
             <td>{{ $account->status }}</td>
             <td>{{ $account->joined_method }}</td>
+            <td>{{ $account->type == 1 ? 'Personal' : 'Project' }}</td>
             <td>{{ $account->joined_at }}</td>
                 <td width="120">
                     {!! Form::open(['route' => ['accounts.destroy', $account->id], 'method' => 'delete']) !!}

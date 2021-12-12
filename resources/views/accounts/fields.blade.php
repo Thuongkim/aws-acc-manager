@@ -65,11 +65,11 @@
 <div class="form-group col-sm-6">
     <label for="type">Type:</label>
     <div class="form-check">
-        <input class="form-check-input" type="radio" name="type" value="1" {{old('type') != 2 ? 'checked' : ''}}>
+        <input class="form-check-input" type="radio" name="type" value="1" {{old('type') !== null ? (old('type') != 2 ? 'checked' : '') : ($account->type == 1 ? 'checked' : '')}}>
         <label class="form-check-label">Personal</label>
     </div>
     <div class="form-check">
-        <input class="form-check-input" type="radio" name="type" value="2" {{old('type') == 2 ? 'checked' : ''}}>
+        <input class="form-check-input" type="radio" name="type" value="2" {{old('type') !== null ? (old('type') == 2 ? 'checked' : '') : ($account->type == 2 ? 'checked' : '')}}>
         <label class="form-check-label">Project</label>
     </div>
 </div>
