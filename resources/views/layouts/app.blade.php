@@ -35,7 +35,7 @@
           crossorigin="anonymous"/>
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-  
+
     <!-- Ionicons -->
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
 
@@ -64,14 +64,14 @@
         <ul class="navbar-nav ml-auto">
             <li class="nav-item dropdown user-menu">
                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
-                    <img src="https://assets.infyom.com/logo/blue_logo_150x150.png"
+                    <img src="{{asset('images/logo/logo.png')}}"
                          class="user-image img-circle elevation-2" alt="User Image">
                     <span class="d-none d-md-inline">{{ Auth::user()->name }}</span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                     <!-- User image -->
                     <li class="user-header bg-primary">
-                        <img src="https://assets.infyom.com/logo/blue_logo_150x150.png"
+                        <img src="{{asset('images/logo/logo.png')}}"
                              class="img-circle elevation-2"
                              alt="User Image">
                         <p>
