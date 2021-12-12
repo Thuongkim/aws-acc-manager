@@ -25,6 +25,10 @@ class CreateAccountRequest extends FormRequest
      */
     public function rules()
     {
-        return Account::$rules;
+        return [
+            'email' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'type' => 'required|integer|max:2|min:1',
+        ];
     }
 }

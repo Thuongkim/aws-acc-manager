@@ -73,7 +73,7 @@ class AccountController extends AppBaseController
      *
      * @return Response
      */
-    public function store(Request $request)
+    public function store(CreateAccountRequest $request)
     {
         $data = [
             'Email' => $request->email,
@@ -82,6 +82,13 @@ class AccountController extends AppBaseController
 
         $organizationsClient = $this->awsService->getAwsInstance();
         $organizationsClient->createAccount($data);
+
+        $data = [
+            'email' => $request->email,
+            'name' => $request->name,
+            'type' => $request->type
+        ];
+        $this->accountRepository->create($data);
 
         Flash::success('Request in progress.');
 

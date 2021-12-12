@@ -48,6 +48,6 @@ class AccountRepository extends BaseRepository
 
     public function upsertAccounts($data)
     {
-        return $this->model->upsert($data, 'aws_id');
+        return $this->model->upsert($data, 'email');
     }
 }

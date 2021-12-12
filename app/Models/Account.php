@@ -28,7 +28,7 @@ class Account extends Model
     use HasFactory;
 
     public $table = 'accounts';
-    
+
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
@@ -46,7 +46,8 @@ class Account extends Model
         'joined_method',
         'joined_at',
         'aws_access_key_id',
-        'aws_secret_access_key'
+        'aws_secret_access_key',
+        'type',
     ];
 
     /**
@@ -56,6 +57,7 @@ class Account extends Model
      */
     protected $casts = [
         'id' => 'integer',
+        'type' => 'integer',
         'aws_id' => 'string',
         'arn' => 'string',
         'email' => 'string',
@@ -80,11 +82,12 @@ class Account extends Model
         'status' => 'required|string|max:255',
         'joined_method' => 'required|string|max:255',
         'joined_at' => 'required',
+        'type' => 'required|integer|max:2|min:1',
         'aws_access_key_id' => 'nullable|string|max:255',
         'aws_secret_access_key' => 'nullable|string|max:255',
         'created_at' => 'nullable',
         'updated_at' => 'nullable'
     ];
 
-    
+
 }
