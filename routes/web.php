@@ -14,5 +14,20 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/home');
+});
+
+Auth::routes();
+
+Route::group(['middleware' => 'auth'], function() {
+    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('/accounts/remove_aws_resource/{id}', [App\Http\Controllers\AccountController::class, 'removeAWSResource'])->name('accounts.removeAWSResource');
+    Route::get('/accounts/remove_aws_resource_stream/{id}', [App\Http\Controllers\AccountController::class, 'removeAWSResourceStream'])->name('accounts.removeAWSResourceStream');
+
+    Route::get('/users/{id}', [App\Http\Controllers\UserController::class, 'show'])->name('users.show');
+    Route::patch('/users/{id}', [App\Http\Controllers\UserController::class, 'update'])->name('users.update');
+    Route::get('/users/{id}/edit', [App\Http\Controllers\UserController::class, 'edit'])->name('users.edit');
+    Route::resource('accounts', App\Http\Controllers\AccountController::class);
+    Route::resource('system_settings', App\Http\Controllers\SystemSettingController::class);
+    Route::get('/account/sync', [App\Http\Controllers\AccountController::class, 'sync'])->name('sync');
 });
